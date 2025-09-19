@@ -315,7 +315,7 @@ PSCommandService.prototype._generateCommand = function(commandConfig, argument2V
                         }
 
                         // append the value
-                        if (valueToSet != null && valueToSet != undefined && (isEmpty || valueToSet.trim().length > 0)) {
+                        if (valueToSet !== null && valueToSet !== undefined && (isEmpty || valueToSet.trim().length > 0)) {
 
                             // sanitize
                             valueToSet = this._sanitize(valueToSet,isQuoted);
