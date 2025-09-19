@@ -603,7 +603,7 @@ describe("test PSCommandService w/ o365CommandRegistry", function () {
       throw e;
     }
   });
-  it("Should test value bleading", async function () {
+  it("Should test value bleeding", async function () {
     this.timeout(10000);
     const statefulProcessCommandProxy = new StatefulProcessCommandProxy({
       name: "Powershell pool",
