@@ -304,7 +304,7 @@ PSCommandService.prototype._generateCommand = function(commandConfig, argument2V
 
                         var passedArgValue = passedArgValues[i];
 
-                        var valueToSet;
+                        var valueToSet = "";
 
                         if (passedArgValue && passedArgValue != 'undefined') {
                             valueToSet = passedArgValue;

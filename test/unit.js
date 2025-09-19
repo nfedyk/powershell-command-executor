@@ -84,6 +84,29 @@ const commandRegistry = {
       type: "text",
     },
   },
+  setContent: {
+    command: "Set-Content {{{arguments}}}",
+    arguments: {
+      'Path': {},
+      'Value': {},
+      'Filter': {},
+    },
+  },
+  getContent: {
+    command: "Get-Content {{{arguments}}}",
+    arguments: {
+      'Path': {},
+    },
+    return: {
+      type: "text",
+    },
+  },
+  removeItem: {
+    command: "Remove-Item {{{arguments}}}",
+    arguments: {
+      'Path': {},
+    },
+  },
 };
 
 
@@ -578,6 +601,55 @@ describe("test PSCommandService w/ o365CommandRegistry", function () {
         statefulProcessCommandProxy.shutdown();
       }, 5000);
       throw e;
+    }
+  });
+  it("Should test value bleeding", async function () {
+    this.timeout(10000);
+    const statefulProcessCommandProxy = new StatefulProcessCommandProxy({
+      name: "Powershell pool",
+      max: 1,
+      min: 1,
+      idleTimeoutMS: 30000,
+
+      logFunction: logFunction,
+      processCommand: "pwsh",
+      processArgs: ["-Command", "-"],
+      processRetainMaxCmdHistory: 30,
+      processCwd: null,
+      processEnvMap: null,
+      processUid: null,
+      processGid: null,
+      initCommands: initCommands,
+      validateFunction: (processProxy) => processProxy.isValid(),
+    });
+
+    const psCommandService = new PSCommandService(
+      statefulProcessCommandProxy,
+      commandRegistry,
+      myLogFunction
+    );
+    try {
+      const newResult = await psCommandService.execute("setContent", {
+        Path: "./test.txt",
+        Value: "Test",
+        Filter: ""
+      });
+      assert.equal(newResult.command.trim(), "Set-Content -Path './test.txt' -Value 'Test'");
+      assert.equal(newResult.stderr, "");
+      const getResult = await psCommandService.execute("getContent", {
+        Path: "./test.txt",
+      });
+      assert.equal(getResult.stderr, "");
+      assert.equal(getResult.stdout, "Test");
+    } catch (e) {
+      assert.fail(e);
+    } finally {
+      await psCommandService.execute("removeItem", {
+        Path: "./test.txt",
+       });    
+      setTimeout(() => {
+        statefulProcessCommandProxy.shutdown();
+      }, 5000);
     }
   });
 });
