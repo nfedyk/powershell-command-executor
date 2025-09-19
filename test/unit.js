@@ -645,7 +645,7 @@ describe("test PSCommandService w/ o365CommandRegistry", function () {
       assert.fail(e);
     } finally {
       await psCommandService.execute("removeItem", {
-        Path: "./test.txt"
+        Path: "./test.txt",
        });    
       setTimeout(() => {
         statefulProcessCommandProxy.shutdown();
